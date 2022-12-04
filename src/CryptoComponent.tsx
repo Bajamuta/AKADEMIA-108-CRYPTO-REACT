@@ -2,6 +2,7 @@ import React, {Component, useState} from 'react';
 import CryptoList from "./CryptoList";
 import axios, {AxiosResponse} from "axios";
 import {CryptoCurrency, ResponseData} from "./interfaces";
+import './CryptoComponent.css';
 
 interface CryptoProps {
 }
@@ -98,7 +99,7 @@ export default class CryptoComponent extends Component<CryptoProps, CryptoState>
             }}>
                 <input placeholder="Enter currency name" type="text" ref={(data) => { this._input = data} }/>
                 <button type="submit">Filtruj</button>
-            </form>;
+            </form>
             <CryptoList cryptos={this.state.cryptos}/>
         </main>
     }

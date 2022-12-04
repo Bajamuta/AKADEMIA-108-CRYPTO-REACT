@@ -1,0 +1,22 @@
+span.CryptoRate.still {
+    color: blue;
+}
+span.CryptoRate.still:before {
+    content: '↦';
+    margin-right: 5px;
+}
+
+span.CryptoRate.up {
+    color: red;
+}
+span.CryptoRate.up:before {
+    content: '↑';
+    margin-right: 5px;
+}
+span.CryptoRate.down {
+    color: green;
+}
+span.CryptoRate.down:before {
+    content: '↓';
+    margin-right: 5px;
+}

@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import {CryptoCurrency} from "./interfaces";
+import './CryptoList.css';
 
 interface CryptoListProps {
     cryptos: CryptoCurrency[]
 }
-
 export default class CryptoList extends Component<CryptoListProps, any> {
 
     showCrypto = () => {
