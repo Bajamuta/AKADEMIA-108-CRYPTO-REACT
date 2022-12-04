@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {CryptoCurrency} from "./App";
+import {CryptoCurrency} from "./interfaces";
 
 interface CryptoListProps {
     cryptos: CryptoCurrency[]
@@ -9,11 +9,11 @@ export default class CryptoList extends Component<CryptoListProps, any> {
 
     showCrypto = () => {
         return this.props.cryptos.map((item: CryptoCurrency) => {
-            return <li key={item.id}>
+            return <li key={item.symbol}>
                 <span className="CryptoLabel">Last rate: </span>
-                <span className="CryptoRate">{item.value} </span>
-                <span className="CryptoName">BTC/{item.name}</span>
-            </li>;
+                <span className={`CryptoRate ${item.status}`}>{item.last} </span>
+                <span className="CryptoName">[BTC/{item.symbol}]</span>
+            </li>
         })
     }
 
