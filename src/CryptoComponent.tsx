@@ -1,4 +1,4 @@
-import React, {Component, useState} from 'react';
+import React, {Component} from 'react';
 import CryptoList from "./CryptoList";
 import axios, {AxiosResponse} from "axios";
 import {CryptoCurrency, ResponseData} from "./interfaces";
@@ -10,7 +10,8 @@ interface CryptoProps {
 interface CryptoState {
     initCryptos: CryptoCurrency[],
     cryptos: CryptoCurrency[],
-    filter: string
+    filter: string,
+    timer: any
 }
 
 export default class CryptoComponent extends Component<CryptoProps, CryptoState> {
@@ -23,8 +24,9 @@ export default class CryptoComponent extends Component<CryptoProps, CryptoState>
         this.state = {
             initCryptos: [],
             cryptos: [],
-            filter: ''
-        }
+            filter: '',
+            timer: null
+        };
     }
 
     filterCurrency = (arg: string | undefined) => {
@@ -34,14 +36,16 @@ export default class CryptoComponent extends Component<CryptoProps, CryptoState>
                     (item: CryptoCurrency) => item.symbol === arg
                 );
                 return ({
-                    cryptos: filteredCryptos
+                    cryptos: filteredCryptos,
+                    filter: arg
                 });
             })
         }
         else {
            this.setState((state: CryptoState) => {
                return ({
-                   cryptos: state.initCryptos
+                   cryptos: state.initCryptos,
+                   filter: ''
                })
            })
         }
@@ -49,6 +53,11 @@ export default class CryptoComponent extends Component<CryptoProps, CryptoState>
 
     componentDidMount() {
         this.getCryptoData();
+        this.setState({timer: setInterval(() => this.getCryptoData(), 1000)})
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.state.timer);
     }
 
     compareStatus(prev: number, current: number) {
