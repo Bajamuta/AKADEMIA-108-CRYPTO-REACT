@@ -10,22 +10,22 @@ interface CryptoProps {
 interface CryptoState {
     initCryptos: CryptoCurrency[],
     cryptos: CryptoCurrency[],
-    filter: string,
-    timer: any
+    filter: string
 }
 
 export default class CryptoComponent extends Component<CryptoProps, CryptoState> {
 
     _input: HTMLInputElement | null;
+    _timer: any;
 
     constructor(props: CryptoProps) {
         super(props);
         this._input = null;
+        this._timer = null;
         this.state = {
             initCryptos: [],
             cryptos: [],
-            filter: '',
-            timer: null
+            filter: ''
         };
     }
 
@@ -53,11 +53,11 @@ export default class CryptoComponent extends Component<CryptoProps, CryptoState>
 
     componentDidMount() {
         this.getCryptoData();
-        this.setState({timer: setInterval(() => this.getCryptoData(), 1000)})
+        this._timer = setInterval(() => this.getCryptoData(), 15000);
     }
 
     componentWillUnmount() {
-        clearInterval(this.state.timer);
+        clearInterval(this._timer);
     }
 
     compareStatus(prev: number, current: number) {
