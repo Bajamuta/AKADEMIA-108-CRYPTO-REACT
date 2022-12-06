@@ -53,7 +53,7 @@ export default class CryptoComponent extends Component<CryptoProps, CryptoState>
 
     componentDidMount() {
         this.getCryptoData();
-        this._timer = setInterval(() => this.getCryptoData(), 15000);
+        this._timer = setInterval(() => this.getCryptoData(), 5000);
     }
 
     componentWillUnmount() {

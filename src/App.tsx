@@ -7,7 +7,7 @@ function App() {
   return (
     <div>
       <header>
-          {/*<img src={logo} className="App-logo" alt="logo" />*/}
+          <img src={logo} className="App-logo" alt="logo" />
           <h1>Crypto Rate</h1>
       </header>
         <CryptoComponent/>
