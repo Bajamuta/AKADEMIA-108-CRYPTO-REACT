@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, useEffect, useRef, useState} from 'react';
 import CryptoList from "./CryptoList";
 import axios, {AxiosResponse} from "axios";
 import {CryptoCurrency, ResponseData} from "./interfaces";
@@ -13,7 +13,7 @@ interface CryptoState {
     filter: string
 }
 
-export default class CryptoComponent extends Component<CryptoProps, CryptoState> {
+/*export default class CryptoComponent extends Component<CryptoProps, CryptoState> {
 
     _input: HTMLInputElement | null;
     _timer: any;
@@ -60,7 +60,7 @@ export default class CryptoComponent extends Component<CryptoProps, CryptoState>
         clearInterval(this._timer);
     }
 
-    compareStatus(prev: number, current: number) {
+    compareStatus = (prev: number, current: number) => {
         let result = 'still';
         if (prev > current) result = 'down';
         else if (prev < current) result = 'up';
@@ -112,4 +112,92 @@ export default class CryptoComponent extends Component<CryptoProps, CryptoState>
             <CryptoList cryptos={this.state.cryptos}/>
         </main>
     }
+}*/
+
+export default function CryptoComponent(props: CryptoProps, state: CryptoState) {
+
+    const _input = useRef<HTMLInputElement>(null);
+    let _timer: any;
+
+    // very important to set the type of Array!
+    const [initCryptos, setInitCryptos] = useState<CryptoCurrency[]>([]);
+    const [cryptos, filterCryptos] = useState(state.initCryptos);
+    const [filter, setFilter] = useState('');
+
+    const filterCurrency = (arg: string | undefined) => {
+        if (arg?.trim()) {
+            filterCryptos(() => {
+                return state.initCryptos.filter(
+                    (item: CryptoCurrency) => item.symbol === arg
+                );
+            });
+            setFilter(() => arg);
+        }
+        else {
+            filterCryptos(() => {
+                return state.initCryptos;
+            });
+            setFilter(() => '');
+        }
+    }
+
+    const compareStatus = (prev: number, current: number) => {
+        let result = 'still';
+        if (prev > current) result = 'down';
+        else if (prev < current) result = 'up';
+        return result;
+    }
+
+    const getCryptoData = () => {
+        axios.get('https://blockchain.info/ticker').then(
+            (response: AxiosResponse) => {
+                const newCryptos = Object.entries(response.data).map(
+                    ([currency, data], index, array) => {
+                        const val = data as ResponseData;
+                        const previousObj = state.initCryptos.find(
+                            (item: CryptoCurrency) => item.symbol === val.symbol
+                        );
+                        if (previousObj)
+                        {
+                            return {
+                                status: compareStatus(previousObj.last, val.last),
+                                ...val
+                            } as CryptoCurrency
+                        }
+                        return {
+                            status: 'still',
+                            ...val
+                        } as CryptoCurrency;
+                    }
+                );
+                setInitCryptos((prev) => newCryptos);
+                filterCurrency(state.filter);
+            }
+        );
+    };
+
+    // similar do componentDidMount and componentDidUpdate
+    useEffect(() => {
+        getCryptoData();
+        _timer = setInterval(() => getCryptoData(), 5000);
+
+        // instead of componentWillUnmount etc.
+        return function cleanup() {
+            clearInterval(_timer);
+        }
+    });
+
+    return <main>
+        <form onSubmit={(e) => {
+            e.preventDefault();
+            if (_input)
+            {
+                filterCurrency(_input.current?.value)
+            }
+        }}>
+            <input placeholder="Enter currency name" type="text" ref={_input}/>
+            <button type="submit">Filtruj</button>
+        </form>
+        <CryptoList cryptos={state.cryptos}/>
+    </main>
 }
