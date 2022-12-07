@@ -4,14 +4,14 @@ import axios, {AxiosResponse} from "axios";
 import {CryptoCurrency, ResponseData} from "./interfaces";
 import './CryptoComponent.css';
 
-interface CryptoProps {
+/*interface CryptoProps {
 }
 
 interface CryptoState {
     initCryptos: CryptoCurrency[],
     cryptos: CryptoCurrency[],
     filter: string
-}
+}*/
 
 /*export default class CryptoComponent extends Component<CryptoProps, CryptoState> {
 
@@ -114,20 +114,20 @@ interface CryptoState {
     }
 }*/
 
-export default function CryptoComponent(props: CryptoProps, state: CryptoState) {
+export default function CryptoComponent() {
 
     const _input = useRef<HTMLInputElement>(null);
     let _timer: any;
 
     // very important to set the type of Array!
     const [initCryptos, setInitCryptos] = useState<CryptoCurrency[]>([]);
-    const [cryptos, filterCryptos] = useState(state.initCryptos);
+    const [cryptos, filterCryptos] = useState<CryptoCurrency[]>([]);
     const [filter, setFilter] = useState('');
 
     const filterCurrency = (arg: string | undefined) => {
         if (arg?.trim()) {
             filterCryptos(() => {
-                return state.initCryptos.filter(
+                return initCryptos.filter(
                     (item: CryptoCurrency) => item.symbol === arg
                 );
             });
@@ -135,7 +135,7 @@ export default function CryptoComponent(props: CryptoProps, state: CryptoState) 
         }
         else {
             filterCryptos(() => {
-                return state.initCryptos;
+                return initCryptos;
             });
             setFilter(() => '');
         }
@@ -154,7 +154,7 @@ export default function CryptoComponent(props: CryptoProps, state: CryptoState) 
                 const newCryptos = Object.entries(response.data).map(
                     ([currency, data], index, array) => {
                         const val = data as ResponseData;
-                        const previousObj = state.initCryptos.find(
+                        const previousObj = initCryptos.find(
                             (item: CryptoCurrency) => item.symbol === val.symbol
                         );
                         if (previousObj)
@@ -171,7 +171,7 @@ export default function CryptoComponent(props: CryptoProps, state: CryptoState) 
                     }
                 );
                 setInitCryptos((prev) => newCryptos);
-                filterCurrency(state.filter);
+                filterCurrency(filter);
             }
         );
     };
@@ -185,7 +185,8 @@ export default function CryptoComponent(props: CryptoProps, state: CryptoState) 
         return function cleanup() {
             clearInterval(_timer);
         }
-    });
+    }, []);
+    // second argument is for array of arguments where this effect has to occur
 
     return <main>
         <form onSubmit={(e) => {
@@ -198,6 +199,6 @@ export default function CryptoComponent(props: CryptoProps, state: CryptoState) 
             <input placeholder="Enter currency name" type="text" ref={_input}/>
             <button type="submit">Filtruj</button>
         </form>
-        <CryptoList cryptos={state.cryptos}/>
+        <CryptoList cryptos={cryptos}/>
     </main>
 }
