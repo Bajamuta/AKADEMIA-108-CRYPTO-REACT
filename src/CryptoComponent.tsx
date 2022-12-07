@@ -117,7 +117,7 @@ interface CryptoState {
 export default function CryptoComponent() {
 
     const _input = useRef<HTMLInputElement>(null);
-    let _timer: any;
+    let _timer: ReturnType<typeof setInterval>;
 
     // very important to set the type of Array!
     const [initCryptos, setInitCryptos] = useState<CryptoCurrency[]>([]);
